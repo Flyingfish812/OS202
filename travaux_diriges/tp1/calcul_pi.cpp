@@ -60,6 +60,18 @@ int main( int nargs, char* argv[] )
 	std::ofstream output( fileName.str().c_str() );
 
 	// Rajout de code....
+	unsigned long totalSamples = 1000000;
+    unsigned long localSamples = totalSamples / nbp;
+
+    double localRatio = approximate_pi(localSamples);
+
+    double totalRatio = 0;
+    MPI_Reduce(&localRatio, &totalRatio, 1, MPI_DOUBLE, MPI_SUM, 0, globComm);
+
+    if (rank == 0) {
+        double pi = totalRatio;
+        output << "Approximated PI = " << pi << std::endl;
+    }
 
 	output.close();
 	// A la fin du programme, on doit synchroniser une dernière fois tous les processus
